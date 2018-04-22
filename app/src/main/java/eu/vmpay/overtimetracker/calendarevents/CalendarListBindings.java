@@ -1,7 +1,7 @@
 package eu.vmpay.overtimetracker.calendarevents;
 
 import android.databinding.BindingAdapter;
-import android.widget.ListView;
+import android.support.v7.widget.RecyclerView;
 
 import java.util.List;
 
@@ -14,10 +14,10 @@ import eu.vmpay.overtimetracker.repository.CalendarModel;
 public class CalendarListBindings
 {
 	@SuppressWarnings("unchecked")
-	@BindingAdapter("binding:items")
-	public static void setItems(ListView listView, List<CalendarModel> items)
+	@BindingAdapter("app:items")
+	public static void setItems(RecyclerView recyclerView, List<CalendarModel> items)
 	{
-		CalendarsAdapter adapter = (CalendarsAdapter) listView.getAdapter();
+		CalendarsAdapter adapter = (CalendarsAdapter) recyclerView.getAdapter();
 		if(adapter != null)
 		{
 			adapter.replaceData(items);

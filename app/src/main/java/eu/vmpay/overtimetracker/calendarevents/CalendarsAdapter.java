@@ -43,16 +43,12 @@ public class CalendarsAdapter extends RecyclerView.Adapter<CalendarsAdapter.View
 		LayoutInflater inflater = LayoutInflater.from(parent.getContext());
 		CalendarItemViewBinding binding = CalendarItemViewBinding.inflate(inflater, parent, false);
 		return new ViewHolder(binding.getRoot());
-		// create a new view
-//		return new ViewHolder(LayoutInflater.from(parent.getContext())
-//				.inflate(R.layout.calendar_item_view, parent, false));
 	}
 
 	@Override
 	public void onBindViewHolder(ViewHolder holder, int position)
 	{
 		holder.binding.setCalendar(viewModel.items.get(position));
-//		holder.mTextView.setText(calendarModelList.get(position).getDisplayName());
 	}
 
 	@Override
@@ -64,12 +60,10 @@ public class CalendarsAdapter extends RecyclerView.Adapter<CalendarsAdapter.View
 	public static class ViewHolder extends RecyclerView.ViewHolder
 	{
 		private final CalendarItemViewBinding binding;
-//		public TextView mTextView;
 
 		public ViewHolder(View v)
 		{
 			super(v);
-//			mTextView = v.findViewById(R.id.textView);
 			binding = DataBindingUtil.bind(v);
 		}
 	}

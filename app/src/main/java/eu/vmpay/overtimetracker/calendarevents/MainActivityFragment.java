@@ -4,6 +4,7 @@ import android.Manifest;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -13,8 +14,11 @@ import android.widget.TextView;
 
 import com.tbruyelle.rxpermissions2.RxPermissions;
 
+import java.util.ArrayList;
+
 import eu.vmpay.overtimetracker.R;
 import eu.vmpay.overtimetracker.databinding.FragmentMainBinding;
+import eu.vmpay.overtimetracker.repository.CalendarModel;
 import io.reactivex.disposables.Disposable;
 
 /**
@@ -108,10 +112,14 @@ public class MainActivityFragment extends Fragment
 	public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState)
 	{
 		fragmentMainBinding = FragmentMainBinding.inflate(inflater, container, false);
+		fragmentMainBinding.recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
 
 		viewModel = MainActivity.obtainViewModel(getActivity());
 
 		fragmentMainBinding.setViewmodel(viewModel);
+
+		mAdapter = new CalendarsAdapter(new ArrayList<CalendarModel>(0), viewModel);
+		fragmentMainBinding.recyclerView.setAdapter(mAdapter);
 
 		setHasOptionsMenu(true);
 

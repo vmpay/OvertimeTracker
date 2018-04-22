@@ -21,13 +21,13 @@
 
 		<android.support.design.widget.FloatingActionButton
 			android:id="@+id/fab"
-			android:onClick="@{() -> viewmodel.onFabClick()}"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
 			android:layout_gravity="bottom|end"
 			android:layout_margin="@dimen/fab_margin"
 			android:layout_marginBottom="8dp"
 			android:layout_marginEnd="8dp"
+			android:onClick="@{() -> viewmodel.onFabClick()}"
 			app:layout_constraintBottom_toBottomOf="parent"
 			app:layout_constraintEnd_toEndOf="parent"
 			app:srcCompat="@android:drawable/ic_dialog_email"/>
@@ -47,7 +47,7 @@
 			android:layout_width="match_parent"
 			android:layout_height="match_parent"
 			android:scrollbars="vertical"
-
+			app:items="@{viewmodel.items}"
 			/>
 
 	</android.support.constraint.ConstraintLayout>
