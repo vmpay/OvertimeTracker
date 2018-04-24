@@ -8,6 +8,7 @@ import android.view.ViewGroup;
 
 import java.util.List;
 
+import eu.vmpay.overtimetracker.R;
 import eu.vmpay.overtimetracker.databinding.CalendarItemViewBinding;
 import eu.vmpay.overtimetracker.repository.CalendarModel;
 
@@ -42,6 +43,17 @@ public class CalendarsAdapter extends RecyclerView.Adapter<CalendarsAdapter.View
 	{
 		LayoutInflater inflater = LayoutInflater.from(parent.getContext());
 		CalendarItemViewBinding binding = CalendarItemViewBinding.inflate(inflater, parent, false);
+		CalendarItemUserActionListener listener = new CalendarItemUserActionListener()
+		{
+			@Override
+			public void onCalendarClicked(CalendarModel calendarModel)
+			{
+				viewModel.textView.set(calendarModel.getDisplayName() + " clicked");
+				viewModel.getSnackbarMessage().setValue(R.string.app_name);
+			}
+		};
+		binding.setListener(listener);
+
 		return new ViewHolder(binding.getRoot());
 	}
 

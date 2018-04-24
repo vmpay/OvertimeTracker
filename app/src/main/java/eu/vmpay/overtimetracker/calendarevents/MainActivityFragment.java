@@ -3,6 +3,7 @@ package eu.vmpay.overtimetracker.calendarevents;
 import android.Manifest;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.annotation.StringRes;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -19,6 +20,8 @@ import java.util.ArrayList;
 import eu.vmpay.overtimetracker.R;
 import eu.vmpay.overtimetracker.databinding.FragmentMainBinding;
 import eu.vmpay.overtimetracker.repository.CalendarModel;
+import eu.vmpay.overtimetracker.utils.SnackbarMessage;
+import eu.vmpay.overtimetracker.utils.SnackbarUtils;
 import io.reactivex.disposables.Disposable;
 
 /**
@@ -123,6 +126,8 @@ public class MainActivityFragment extends Fragment
 
 		setHasOptionsMenu(true);
 
+		setupSnackbar();
+
 		return fragmentMainBinding.getRoot();
 	}
 
@@ -166,5 +171,17 @@ public class MainActivityFragment extends Fragment
 						Log.d(TAG, "onComplete");
 					}
 				});
+	}
+
+	private void setupSnackbar()
+	{
+		viewModel.getSnackbarMessage().observe(this, new SnackbarMessage.SnackbarObserver()
+		{
+			@Override
+			public void onNewMessage(@StringRes int snackbarMessageResourceId)
+			{
+				SnackbarUtils.showSnackbar(getView(), getString(snackbarMessageResourceId));
+			}
+		});
 	}
 }

@@ -12,6 +12,7 @@ import java.util.List;
 import eu.vmpay.overtimetracker.R;
 import eu.vmpay.overtimetracker.repository.CalendarModel;
 import eu.vmpay.overtimetracker.repository.CalendarRepository;
+import eu.vmpay.overtimetracker.utils.SnackbarMessage;
 import io.reactivex.Observer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
@@ -30,6 +31,8 @@ public class EventSearchViewModel extends ViewModel
 	public final ObservableList<CalendarModel> items = new ObservableArrayList<>();
 
 	public final ObservableField<String> textView = new ObservableField<>();
+
+	private final SnackbarMessage mSnackbarText = new SnackbarMessage();
 
 	private final CalendarRepository calendarRepository;
 	private final Application mApplication;
@@ -84,5 +87,10 @@ public class EventSearchViewModel extends ViewModel
 	public void onFabClick()
 	{
 		textView.set("Button clicked");
+	}
+
+	SnackbarMessage getSnackbarMessage()
+	{
+		return mSnackbarText;
 	}
 }
