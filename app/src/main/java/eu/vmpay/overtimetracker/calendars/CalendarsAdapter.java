@@ -1,4 +1,4 @@
-package eu.vmpay.overtimetracker.calendarevents;
+package eu.vmpay.overtimetracker.calendars;
 
 import android.databinding.DataBindingUtil;
 import android.support.v7.widget.RecyclerView;
@@ -8,7 +8,6 @@ import android.view.ViewGroup;
 
 import java.util.List;
 
-import eu.vmpay.overtimetracker.R;
 import eu.vmpay.overtimetracker.databinding.CalendarItemViewBinding;
 import eu.vmpay.overtimetracker.repository.CalendarModel;
 
@@ -19,9 +18,9 @@ import eu.vmpay.overtimetracker.repository.CalendarModel;
 public class CalendarsAdapter extends RecyclerView.Adapter<CalendarsAdapter.ViewHolder>
 {
 	private List<CalendarModel> calendarModelList;
-	private final EventSearchViewModel viewModel;
+	private final CalendarsViewModel viewModel;
 
-	public CalendarsAdapter(List<CalendarModel> calendarModelList, EventSearchViewModel viewModel)
+	public CalendarsAdapter(List<CalendarModel> calendarModelList, CalendarsViewModel viewModel)
 	{
 		this.viewModel = viewModel;
 		setList(calendarModelList);
@@ -48,8 +47,7 @@ public class CalendarsAdapter extends RecyclerView.Adapter<CalendarsAdapter.View
 			@Override
 			public void onCalendarClicked(CalendarModel calendarModel)
 			{
-				viewModel.textView.set(calendarModel.getDisplayName() + " clicked");
-				viewModel.getSnackbarMessage().setValue(R.string.app_name);
+				viewModel.getmOpenCalendarEvent().setValue(calendarModel.getCalID());
 			}
 		};
 		binding.setListener(listener);

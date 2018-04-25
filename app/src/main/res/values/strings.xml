@@ -5,4 +5,6 @@
 	<string name="loading_calendar_error">Loading calendar error</string>
 	<string name="account_name">Account:</string>
 	<string name="owner_name">Owner:</string>
+	<string name="title_calendars_activty">Calendars</string>
+	<string name="title_activity_events">Events</string>
 </resources>

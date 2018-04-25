@@ -12,14 +12,22 @@
 		android:supportsRtl="true"
 		android:theme="@style/AppTheme">
 		<activity
-			android:name=".calendarevents.MainActivity"
-			android:label="@string/app_name"
+			android:name=".calendars.MainActivity"
 			android:theme="@style/AppTheme.NoActionBar">
 			<intent-filter>
 				<action android:name="android.intent.action.MAIN"/>
 
 				<category android:name="android.intent.category.LAUNCHER"/>
 			</intent-filter>
+		</activity>
+		<activity
+			android:name=".events.EventsActivity"
+			android:label="@string/title_activity_events"
+			android:parentActivityName=".calendars.MainActivity"
+			android:theme="@style/AppTheme.NoActionBar">
+			<meta-data
+				android:name="android.support.PARENT_ACTIVITY"
+				android:value="eu.vmpay.overtimetracker.calendars.MainActivity"/>
 		</activity>
 	</application>
 

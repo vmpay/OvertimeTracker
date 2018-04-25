@@ -9,14 +9,14 @@
 
 		<variable
 			name="viewmodel"
-			type="eu.vmpay.overtimetracker.calendarevents.EventSearchViewModel"/>
+			type="eu.vmpay.overtimetracker.calendars.CalendarsViewModel"/>
 
 	</data>
 
 	<android.support.design.widget.CoordinatorLayout
 		android:layout_width="match_parent"
 		android:layout_height="match_parent"
-		tools:context="eu.vmpay.overtimetracker.calendarevents.MainActivityFragment"
+		tools:context="eu.vmpay.overtimetracker.calendars.MainActivityFragment"
 		tools:showIn="@layout/activity_main">
 
 		<android.support.design.widget.FloatingActionButton

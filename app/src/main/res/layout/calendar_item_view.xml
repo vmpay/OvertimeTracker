@@ -12,7 +12,7 @@
 
 		<variable
 			name="listener"
-			type="eu.vmpay.overtimetracker.calendarevents.CalendarItemUserActionListener"/>
+			type="eu.vmpay.overtimetracker.calendars.CalendarItemUserActionListener"/>
 
 	</data>
 

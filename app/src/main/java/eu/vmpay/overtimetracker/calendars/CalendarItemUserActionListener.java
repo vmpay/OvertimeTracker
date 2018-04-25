@@ -1,4 +1,4 @@
-package eu.vmpay.overtimetracker.calendarevents;
+package eu.vmpay.overtimetracker.calendars;
 
 import eu.vmpay.overtimetracker.repository.CalendarModel;
 

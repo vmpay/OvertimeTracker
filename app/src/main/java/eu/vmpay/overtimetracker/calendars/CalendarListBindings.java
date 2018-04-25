@@ -1,4 +1,4 @@
-package eu.vmpay.overtimetracker.calendarevents;
+package eu.vmpay.overtimetracker.calendars;
 
 import android.databinding.BindingAdapter;
 import android.support.v7.widget.RecyclerView;

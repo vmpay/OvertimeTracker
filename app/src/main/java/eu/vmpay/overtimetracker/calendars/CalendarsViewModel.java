@@ -1,4 +1,4 @@
-package eu.vmpay.overtimetracker.calendarevents;
+package eu.vmpay.overtimetracker.calendars;
 
 import android.app.Application;
 import android.arch.lifecycle.ViewModel;
@@ -12,6 +12,7 @@ import java.util.List;
 import eu.vmpay.overtimetracker.R;
 import eu.vmpay.overtimetracker.repository.CalendarModel;
 import eu.vmpay.overtimetracker.repository.CalendarRepository;
+import eu.vmpay.overtimetracker.utils.SingleLiveEvent;
 import eu.vmpay.overtimetracker.utils.SnackbarMessage;
 import io.reactivex.Observer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -24,20 +25,20 @@ import static android.widget.Toast.LENGTH_LONG;
  * Created by Andrew on 13/04/2018.
  */
 
-public class EventSearchViewModel extends ViewModel
+public class CalendarsViewModel extends ViewModel
 {
-	private final String TAG = "EventSearchViewModel";
+	private final String TAG = "CalendarsViewModel";
 
 	public final ObservableList<CalendarModel> items = new ObservableArrayList<>();
-
 	public final ObservableField<String> textView = new ObservableField<>();
 
 	private final SnackbarMessage mSnackbarText = new SnackbarMessage();
+	private final SingleLiveEvent<Long> mOpenCalendarEvent = new SingleLiveEvent<>();
 
 	private final CalendarRepository calendarRepository;
 	private final Application mApplication;
 
-	public EventSearchViewModel(CalendarRepository calendarRepository, Application mApplication)
+	public CalendarsViewModel(CalendarRepository calendarRepository, Application mApplication)
 	{
 		this.calendarRepository = calendarRepository;
 		this.mApplication = mApplication;
@@ -92,5 +93,10 @@ public class EventSearchViewModel extends ViewModel
 	SnackbarMessage getSnackbarMessage()
 	{
 		return mSnackbarText;
+	}
+
+	SingleLiveEvent<Long> getmOpenCalendarEvent()
+	{
+		return mOpenCalendarEvent;
 	}
 }

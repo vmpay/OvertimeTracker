@@ -6,7 +6,8 @@ import android.arch.lifecycle.ViewModel;
 import android.arch.lifecycle.ViewModelProvider;
 import android.support.annotation.VisibleForTesting;
 
-import eu.vmpay.overtimetracker.calendarevents.EventSearchViewModel;
+import eu.vmpay.overtimetracker.calendars.CalendarsViewModel;
+import eu.vmpay.overtimetracker.events.EventsViewModel;
 import eu.vmpay.overtimetracker.repository.CalendarRepository;
 
 /**
@@ -54,10 +55,15 @@ public class ViewModelFactory extends ViewModelProvider.NewInstanceFactory
 	@Override
 	public <T extends ViewModel> T create(Class<T> modelClass)
 	{
-		if(modelClass.isAssignableFrom(EventSearchViewModel.class))
+		if(modelClass.isAssignableFrom(CalendarsViewModel.class))
 		{
 			//noinspection unchecked
-			return (T) new EventSearchViewModel(calendarRespository, mApplication);
+			return (T) new CalendarsViewModel(calendarRespository, mApplication);
+		}
+		else if(modelClass.isAssignableFrom(EventsViewModel.class))
+		{
+			//noinspection unchecked
+			return (T) new EventsViewModel(calendarRespository, mApplication);
 		}
 		throw new IllegalArgumentException("Unknown ViewModel class: " + modelClass.getName());
 	}
