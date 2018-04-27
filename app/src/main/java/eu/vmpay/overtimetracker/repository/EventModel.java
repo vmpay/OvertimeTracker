@@ -2,6 +2,8 @@ package eu.vmpay.overtimetracker.repository;
 
 import android.provider.CalendarContract;
 
+import java.util.Locale;
+
 /**
  * Created by Andrew on 25/04/2018.
  */
@@ -10,13 +12,14 @@ public class EventModel
 {
 	private final long eventId;
 	private final long calendarId;
-	private final String oranizer;
+	private final String organizer;
 	private final String title;
 	private final long dtStart;
 	private final long dtEnd;
 	private final String duration;
 	private final String rRule;
 	private final String rDate;
+	private double durationHours;
 
 	static final String[] EVENT_PROJECTION = new String[] {
 			CalendarContract.Events._ID,            // 0
@@ -44,7 +47,7 @@ public class EventModel
 	{
 		this.eventId = eventId;
 		this.calendarId = calendarId;
-		this.oranizer = organizer;
+		this.organizer = organizer;
 		this.title = title;
 		this.dtStart = dtStart;
 		this.dtEnd = dtEnd;
@@ -63,9 +66,9 @@ public class EventModel
 		return calendarId;
 	}
 
-	public String getOranizer()
+	public String getOrganizer()
 	{
-		return oranizer;
+		return organizer;
 	}
 
 	public String getTitle()
@@ -96,5 +99,15 @@ public class EventModel
 	public String getrDate()
 	{
 		return rDate;
+	}
+
+	public String getDurationHours()
+	{
+		return String.format(Locale.US, "%.2f h", durationHours);
+	}
+
+	public void setDurationHours(double durationHours)
+	{
+		this.durationHours = durationHours;
 	}
 }

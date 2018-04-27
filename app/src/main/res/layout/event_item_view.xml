@@ -48,7 +48,7 @@
 				android:id="@+id/tvCount"
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
-				android:text="@{event.duration}"
+				android:text="@{event.durationHours}"
 				tools:text="100h"/>
 
 		</LinearLayout>

@@ -4,8 +4,9 @@ import android.app.Application;
 import android.arch.lifecycle.ViewModel;
 import android.databinding.ObservableArrayList;
 import android.databinding.ObservableList;
+import android.util.Log;
 
-import java.util.List;
+import java.util.Calendar;
 
 import eu.vmpay.overtimetracker.repository.CalendarRepository;
 import eu.vmpay.overtimetracker.repository.EventModel;
@@ -49,21 +50,29 @@ public class EventsViewModel extends ViewModel
 
 	private void loadEvents(long calendarId)
 	{
-		calendarRepository.getEventList(calendarId)
+		// get last month events
+		Calendar cal = Calendar.getInstance();
+		cal.set(Calendar.HOUR_OF_DAY, 0);
+		cal.clear(Calendar.MINUTE);
+		cal.clear(Calendar.SECOND);
+		cal.clear(Calendar.MILLISECOND);
+		cal.set(Calendar.DAY_OF_MONTH, 1);
+		calendarRepository.getEvents(calendarId, cal.getTimeInMillis(), System.currentTimeMillis())
 				.subscribeOn(Schedulers.io())
 				.observeOn(AndroidSchedulers.mainThread())
-				.subscribeWith(new Observer<List<EventModel>>()
+				.subscribeWith(new Observer<EventModel>()
 				{
 					@Override
 					public void onSubscribe(Disposable d)
 					{
+						items.clear();
 					}
 
 					@Override
-					public void onNext(List<EventModel> eventModels)
+					public void onNext(EventModel item)
 					{
-						items.clear();
-						items.addAll(eventModels);
+						item.setDurationHours(item.getDuration() == null ? ((double) (item.getDtEnd() - item.getDtStart())) / 1000 / 60 / 60 : 0);
+						items.add(item);
 					}
 
 					@Override
@@ -75,6 +84,7 @@ public class EventsViewModel extends ViewModel
 					@Override
 					public void onComplete()
 					{
+						Log.d(TAG, "Queried item list size " + items.size());
 					}
 				});
 	}
