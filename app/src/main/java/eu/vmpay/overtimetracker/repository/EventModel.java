@@ -110,4 +110,9 @@ public class EventModel
 	{
 		this.durationHours = durationHours;
 	}
+
+	public double getDurationDouble()
+	{
+		return durationHours;
+	}
 }

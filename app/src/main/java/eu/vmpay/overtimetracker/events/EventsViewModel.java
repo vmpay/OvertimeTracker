@@ -57,6 +57,7 @@ public class EventsViewModel extends ViewModel
 		cal.clear(Calendar.SECOND);
 		cal.clear(Calendar.MILLISECOND);
 		cal.set(Calendar.DAY_OF_MONTH, 1);
+		cal.add(Calendar.MONTH, -3);
 		calendarRepository.getEvents(calendarId, cal.getTimeInMillis(), System.currentTimeMillis())
 				.subscribeOn(Schedulers.io())
 				.observeOn(AndroidSchedulers.mainThread())
@@ -72,7 +73,7 @@ public class EventsViewModel extends ViewModel
 					public void onNext(EventModel item)
 					{
 						item.setDurationHours(item.getDuration() == null ? ((double) (item.getDtEnd() - item.getDtStart())) / 1000 / 60 / 60 : 0);
-						items.add(item);
+						addItem(item);
 					}
 
 					@Override
@@ -97,5 +98,18 @@ public class EventsViewModel extends ViewModel
 	public void setCalendarId(long calendarId)
 	{
 		this.calendarId = calendarId;
+	}
+
+	private void addItem(EventModel item)
+	{
+		for(EventModel entry : items)
+		{
+			if(entry.getTitle().equals(item.getTitle()))
+			{
+				entry.setDurationHours(entry.getDurationDouble() + item.getDurationDouble());
+				return;
+			}
+		}
+		items.add(item);
 	}
 }
