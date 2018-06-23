@@ -6,7 +6,9 @@ import android.databinding.ObservableArrayList;
 import android.databinding.ObservableList;
 import android.util.Log;
 
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.List;
 
 import eu.vmpay.overtimetracker.repository.CalendarRepository;
 import eu.vmpay.overtimetracker.repository.EventModel;
@@ -29,6 +31,7 @@ public class EventsViewModel extends ViewModel
 	private final CalendarRepository calendarRepository;
 	private final Application mApplication;
 	private long calendarId = 0;
+	private final List<EventModel> groupedList = new ArrayList<>();
 
 	private SnackbarMessage mSnackbarText;
 
@@ -71,8 +74,9 @@ public class EventsViewModel extends ViewModel
 					@Override
 					public void onNext(EventModel item)
 					{
-						item.setDurationHours(item.getDuration() == null ? ((double) (item.getDtEnd() - item.getDtStart())) / 1000 / 60 / 60 : 0);
-						items.add(item);
+						item.setDurationHours(item.getDurationDouble());
+						addItem(item);
+
 					}
 
 					@Override
@@ -97,5 +101,18 @@ public class EventsViewModel extends ViewModel
 	public void setCalendarId(long calendarId)
 	{
 		this.calendarId = calendarId;
+	}
+
+	private void addItem(EventModel item)
+	{
+		for(EventModel entry : items)
+		{
+			if(entry.getTitle().equals(item.getTitle()))
+			{
+				entry.setDurationHours(entry.getDurationDouble() + item.getDurationDouble());
+				return;
+			}
+		}
+		items.add(item);
 	}
 }

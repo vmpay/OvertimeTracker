@@ -110,4 +110,9 @@ public class EventModel
 	{
 		this.durationHours = durationHours;
 	}
+
+	public double getDurationDouble()
+	{
+		return duration == null ? ((double) (dtEnd - dtStart)) / 1000 / 60 / 60 : 0;
+	}
 }
