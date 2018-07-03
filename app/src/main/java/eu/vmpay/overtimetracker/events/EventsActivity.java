@@ -5,6 +5,13 @@ import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
+
+import com.borax12.materialdaterangepicker.date.DatePickerDialog;
+
+import java.util.Calendar;
 
 import eu.vmpay.overtimetracker.R;
 import eu.vmpay.overtimetracker.ViewModelFactory;
@@ -42,5 +49,41 @@ public class EventsActivity extends AppCompatActivity
 		ViewModelFactory factory = ViewModelFactory.getInstance(activity.getApplication());
 
 		return ViewModelProviders.of(activity, factory).get(EventsViewModel.class);
+	}
+
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu)
+	{
+		MenuInflater inflater = getMenuInflater();
+		inflater.inflate(R.menu.main_menu, menu);
+		return true;
+	}
+
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item)
+	{
+		switch(item.getItemId())
+		{
+			case R.id.menu_data_pick:
+				openDatePicker();
+				return true;
+			default:
+				return super.onOptionsItemSelected(item);
+		}
+	}
+
+	private void openDatePicker()
+	{
+		if(viewModel != null)
+		{
+			Calendar now = Calendar.getInstance();
+			DatePickerDialog datePickerDialog = DatePickerDialog.newInstance(
+					viewModel,
+					now.get(Calendar.YEAR),
+					now.get(Calendar.MONTH),
+					now.get(Calendar.DAY_OF_MONTH)
+			);
+			datePickerDialog.show(getFragmentManager(), "DatepickerDialog");
+		}
 	}
 }
