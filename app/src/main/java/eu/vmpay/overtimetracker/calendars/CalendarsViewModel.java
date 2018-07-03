@@ -3,7 +3,6 @@ package eu.vmpay.overtimetracker.calendars;
 import android.app.Application;
 import android.arch.lifecycle.ViewModel;
 import android.databinding.ObservableArrayList;
-import android.databinding.ObservableField;
 import android.databinding.ObservableList;
 import android.widget.Toast;
 
@@ -30,7 +29,6 @@ public class CalendarsViewModel extends ViewModel
 	private final String TAG = "CalendarsViewModel";
 
 	public final ObservableList<CalendarModel> items = new ObservableArrayList<>();
-	public final ObservableField<String> textView = new ObservableField<>();
 
 	private final SnackbarMessage mSnackbarText = new SnackbarMessage();
 	private final SingleLiveEvent<Long> mOpenCalendarEvent = new SingleLiveEvent<>();
@@ -83,11 +81,6 @@ public class CalendarsViewModel extends ViewModel
 						// TODO: hide loading indicator
 					}
 				});
-	}
-
-	public void onFabClick()
-	{
-		textView.set("Button clicked");
 	}
 
 	SnackbarMessage getSnackbarMessage()

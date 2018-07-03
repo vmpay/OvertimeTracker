@@ -7,4 +7,5 @@
 	<string name="owner_name">Owner:</string>
 	<string name="title_calendars_activty">Calendars</string>
 	<string name="title_activity_events">Events</string>
+	<string name="date_pick_text">Date picker</string>
 </resources>
