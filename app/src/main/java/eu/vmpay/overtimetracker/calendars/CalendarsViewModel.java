@@ -1,10 +1,18 @@
 package eu.vmpay.overtimetracker.calendars;
 
+import android.Manifest;
 import android.app.Application;
 import android.arch.lifecycle.ViewModel;
+import android.content.Intent;
 import android.databinding.ObservableArrayList;
+import android.databinding.ObservableBoolean;
 import android.databinding.ObservableList;
+import android.net.Uri;
+import android.provider.Settings;
+import android.support.annotation.Nullable;
 import android.widget.Toast;
+
+import com.tbruyelle.rxpermissions2.RxPermissions;
 
 import java.util.List;
 
@@ -26,15 +34,15 @@ import static android.widget.Toast.LENGTH_LONG;
 
 public class CalendarsViewModel extends ViewModel
 {
-	private final String TAG = "CalendarsViewModel";
-
 	public final ObservableList<CalendarModel> items = new ObservableArrayList<>();
+	public final ObservableBoolean isPermissionGranted = new ObservableBoolean(false);
 
 	private final SnackbarMessage mSnackbarText = new SnackbarMessage();
 	private final SingleLiveEvent<Long> mOpenCalendarEvent = new SingleLiveEvent<>();
 
 	private final CalendarRepository calendarRepository;
 	private final Application mApplication;
+	private Disposable disposable;
 
 	public CalendarsViewModel(CalendarRepository calendarRepository, Application mApplication)
 	{
@@ -42,9 +50,40 @@ public class CalendarsViewModel extends ViewModel
 		this.mApplication = mApplication;
 	}
 
-	public void start()
+	public void start(@Nullable RxPermissions rxPermissions)
 	{
-		loadCalendars();
+		if(rxPermissions != null)
+		{
+			disposable = rxPermissions.request(Manifest.permission.READ_CALENDAR)
+					.subscribe(granted -> {
+						if(granted)
+						{
+							loadCalendars();
+
+						}
+						isPermissionGranted.set(granted);
+					});
+		}
+		else
+		{
+			isPermissionGranted.set(false);
+		}
+	}
+
+	public void checkPermissionGranted(@Nullable RxPermissions rxPermissions)
+	{
+		if(rxPermissions != null)
+		{
+			if(rxPermissions.isGranted(Manifest.permission.READ_CALENDAR))
+			{
+				isPermissionGranted.set(true);
+				loadCalendars();
+			}
+			else
+			{
+				isPermissionGranted.set(false);
+			}
+		}
 	}
 
 	private void loadCalendars()
@@ -91,5 +130,22 @@ public class CalendarsViewModel extends ViewModel
 	SingleLiveEvent<Long> getmOpenCalendarEvent()
 	{
 		return mOpenCalendarEvent;
+	}
+
+	public void onOpenSettingsClick()
+	{
+		Intent intent = new Intent();
+		intent.setAction(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+		Uri uri = Uri.fromParts("package", mApplication.getPackageName(), null);
+		intent.setData(uri);
+		mApplication.startActivity(intent);
+	}
+
+	public void clearResources()
+	{
+		if(disposable != null && !disposable.isDisposed())
+		{
+			disposable.dispose();
+		}
 	}
 }
