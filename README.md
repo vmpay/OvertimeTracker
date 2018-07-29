@@ -1,5 +1,6 @@
 # OvertimeTracker 
-[![Build Status](https://travis-ci.org/vmpay/OvertimeTracker.svg?branch=master)
+
+![Build Status](https://travis-ci.org/vmpay/OvertimeTracker.svg?branch=master)
 
 Android app for counting single calendar events duration
 
