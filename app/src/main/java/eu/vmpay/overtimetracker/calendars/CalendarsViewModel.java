@@ -14,16 +14,13 @@ import android.widget.Toast;
 
 import com.tbruyelle.rxpermissions2.RxPermissions;
 
-import java.util.List;
-
 import eu.vmpay.overtimetracker.R;
 import eu.vmpay.overtimetracker.repository.CalendarModel;
 import eu.vmpay.overtimetracker.repository.CalendarRepository;
 import eu.vmpay.overtimetracker.utils.SingleLiveEvent;
 import eu.vmpay.overtimetracker.utils.SnackbarMessage;
-import io.reactivex.Observer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.disposables.Disposable;
+import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.schedulers.Schedulers;
 
 import static android.widget.Toast.LENGTH_LONG;
@@ -42,27 +39,29 @@ public class CalendarsViewModel extends ViewModel
 
 	private final CalendarRepository calendarRepository;
 	private final Application mApplication;
-	private Disposable disposable;
+	private final CompositeDisposable compositeDisposable;
 
 	public CalendarsViewModel(CalendarRepository calendarRepository, Application mApplication)
 	{
 		this.calendarRepository = calendarRepository;
 		this.mApplication = mApplication;
+		this.compositeDisposable = new CompositeDisposable();
 	}
 
 	public void start(@Nullable RxPermissions rxPermissions)
 	{
 		if(rxPermissions != null)
 		{
-			disposable = rxPermissions.request(Manifest.permission.READ_CALENDAR)
-					.subscribe(granted -> {
-						if(granted)
-						{
-							loadCalendars();
+			compositeDisposable.add(
+					rxPermissions.request(Manifest.permission.READ_CALENDAR)
+							.subscribe(granted -> {
+								if(granted)
+								{
+									loadCalendars();
 
-						}
-						isPermissionGranted.set(granted);
-					});
+								}
+								isPermissionGranted.set(granted);
+							}));
 		}
 		else
 		{
@@ -88,38 +87,19 @@ public class CalendarsViewModel extends ViewModel
 
 	private void loadCalendars()
 	{
-		calendarRepository.getCalendarList()
+		compositeDisposable.add(calendarRepository.getCalendarList()
 				.subscribeOn(Schedulers.io())
 				.observeOn(AndroidSchedulers.mainThread())
-				.subscribeWith(new Observer<List<CalendarModel>>()
-				{
-
-					@Override
-					public void onSubscribe(Disposable d)
-					{
-						// TODO: show loading indicator
-					}
-
-					@Override
-					public void onNext(List<CalendarModel> calendarModels)
-					{
-						items.clear();
-						items.addAll(calendarModels);
-					}
-
-					@Override
-					public void onError(Throwable e)
-					{
-						e.printStackTrace();
-						Toast.makeText(mApplication, R.string.loading_calendar_error, LENGTH_LONG).show();
-					}
-
-					@Override
-					public void onComplete()
-					{
-						// TODO: hide loading indicator
-					}
-				});
+				.subscribe(calendarModels -> {
+							items.clear();
+							items.addAll(calendarModels);
+						},
+						throwable -> {
+							throwable.printStackTrace();
+							Toast.makeText(mApplication, R.string.loading_calendar_error, LENGTH_LONG).show();
+						}
+				)
+		);
 	}
 
 	SnackbarMessage getSnackbarMessage()
@@ -141,11 +121,8 @@ public class CalendarsViewModel extends ViewModel
 		mApplication.startActivity(intent);
 	}
 
-	public void clearResources()
+	public void stop()
 	{
-		if(disposable != null && !disposable.isDisposed())
-		{
-			disposable.dispose();
-		}
+		compositeDisposable.clear();
 	}
 }

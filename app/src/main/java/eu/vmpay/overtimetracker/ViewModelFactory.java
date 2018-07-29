@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.app.Application;
 import android.arch.lifecycle.ViewModel;
 import android.arch.lifecycle.ViewModelProvider;
+import android.support.annotation.NonNull;
 import android.support.annotation.VisibleForTesting;
 
 import eu.vmpay.overtimetracker.calendars.CalendarsViewModel;
@@ -21,7 +22,7 @@ public class ViewModelFactory extends ViewModelProvider.NewInstanceFactory
 
 	private final Application mApplication;
 
-	private final CalendarRepository calendarRespository;
+	private final CalendarRepository calendarRepository;
 
 	public static ViewModelFactory getInstance(Application application)
 	{
@@ -49,21 +50,22 @@ public class ViewModelFactory extends ViewModelProvider.NewInstanceFactory
 	private ViewModelFactory(Application application, CalendarRepository repository)
 	{
 		mApplication = application;
-		calendarRespository = repository;
+		calendarRepository = repository;
 	}
 
+	@NonNull
 	@Override
-	public <T extends ViewModel> T create(Class<T> modelClass)
+	public <T extends ViewModel> T create(@NonNull Class<T> modelClass)
 	{
 		if(modelClass.isAssignableFrom(CalendarsViewModel.class))
 		{
 			//noinspection unchecked
-			return (T) new CalendarsViewModel(calendarRespository, mApplication);
+			return (T) new CalendarsViewModel(calendarRepository, mApplication);
 		}
 		else if(modelClass.isAssignableFrom(EventsViewModel.class))
 		{
 			//noinspection unchecked
-			return (T) new EventsViewModel(calendarRespository, mApplication);
+			return (T) new EventsViewModel(calendarRepository, mApplication);
 		}
 		throw new IllegalArgumentException("Unknown ViewModel class: " + modelClass.getName());
 	}

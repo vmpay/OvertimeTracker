@@ -5,7 +5,6 @@ import android.arch.lifecycle.ViewModel;
 import android.databinding.ObservableArrayList;
 import android.databinding.ObservableField;
 import android.databinding.ObservableList;
-import android.util.Log;
 
 import com.borax12.materialdaterangepicker.date.DatePickerDialog;
 
@@ -17,9 +16,8 @@ import java.util.Locale;
 import eu.vmpay.overtimetracker.repository.CalendarRepository;
 import eu.vmpay.overtimetracker.repository.EventModel;
 import eu.vmpay.overtimetracker.utils.SnackbarMessage;
-import io.reactivex.Observer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.disposables.Disposable;
+import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.schedulers.Schedulers;
 
 /**
@@ -28,13 +26,12 @@ import io.reactivex.schedulers.Schedulers;
 
 public class EventsViewModel extends ViewModel implements DatePickerDialog.OnDateSetListener
 {
-	private final String TAG = "EventsViewModel";
-
 	public final ObservableList<EventModel> items = new ObservableArrayList<>();
 	public final ObservableField<String> textView = new ObservableField<>();
 
 	private final CalendarRepository calendarRepository;
 	private final Application mApplication;
+	private final CompositeDisposable compositeDisposable;
 	private long calendarId = 0;
 
 	private SnackbarMessage mSnackbarText;
@@ -43,12 +40,11 @@ public class EventsViewModel extends ViewModel implements DatePickerDialog.OnDat
 	private Date endDate = new Date();
 	private final DateFormat dateInstance = DateFormat.getDateInstance();
 
-	private Observer<EventModel> disposable;
-
 	public EventsViewModel(CalendarRepository calendarRepository, Application mApplication)
 	{
 		this.calendarRepository = calendarRepository;
 		this.mApplication = mApplication;
+		this.compositeDisposable = new CompositeDisposable();
 
 		Calendar cal = Calendar.getInstance();
 		cal.set(Calendar.HOUR_OF_DAY, 0);
@@ -66,38 +62,24 @@ public class EventsViewModel extends ViewModel implements DatePickerDialog.OnDat
 		loadEvents(calendarId, startDate.getTime(), endDate.getTime());
 	}
 
+	public void stop()
+	{
+		compositeDisposable.dispose();
+	}
+
 	private void loadEvents(long calendarId, long startTimestamp, long endTimestamp)
 	{
-		disposable = calendarRepository.getEvents(calendarId, startTimestamp, endTimestamp)
+		compositeDisposable.add(calendarRepository.getEvents(calendarId, startTimestamp, endTimestamp)
 				.subscribeOn(Schedulers.io())
 				.observeOn(AndroidSchedulers.mainThread())
-				.subscribeWith(new Observer<EventModel>()
-				{
-					@Override
-					public void onSubscribe(Disposable d)
-					{
-						items.clear();
-					}
-
-					@Override
-					public void onNext(EventModel item)
-					{
-						item.setDurationHours(item.getDuration() == null ? ((double) (item.getDtEnd() - item.getDtStart())) / 1000 / 60 / 60 : 0);
-						addItem(item);
-					}
-
-					@Override
-					public void onError(Throwable e)
-					{
-						e.printStackTrace();
-					}
-
-					@Override
-					public void onComplete()
-					{
-						Log.d(TAG, "Queried item list size " + items.size());
-					}
-				});
+				.doOnSubscribe(disposable -> items.clear())
+				.subscribe(item -> {
+							item.setDurationHours(item.getDuration() == null ? ((double) (item.getDtEnd() - item.getDtStart())) / 1000 / 60 / 60 : 0);
+							addItem(item);
+						},
+						Throwable::printStackTrace
+				)
+		);
 	}
 
 	SnackbarMessage getSnackbarMessage()
@@ -149,7 +131,6 @@ public class EventsViewModel extends ViewModel implements DatePickerDialog.OnDat
 	{
 		String date = String.format(Locale.US, "%s - %s",
 				dateInstance.format(startDate), dateInstance.format(endDate));
-		Log.d(TAG, date);
 		textView.set(date);
 	}
 }

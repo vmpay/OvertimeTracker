@@ -68,7 +68,7 @@ public class MainActivityFragment extends Fragment
 	@Override
 	public void onDestroyView()
 	{
-		viewModel.clearResources();
+		viewModel.stop();
 		super.onDestroyView();
 	}
 

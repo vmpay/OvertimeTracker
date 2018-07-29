@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import io.reactivex.Observable;
+import io.reactivex.Single;
 
 /**
  * Created by Andrew on 13/04/2018.
@@ -20,8 +21,6 @@ import io.reactivex.Observable;
 
 public class CalendarRepository
 {
-	private final String TAG = "CalendarRepository";
-
 	private volatile static CalendarRepository INSTANCE = null;
 
 	private final Context context;
@@ -46,10 +45,9 @@ public class CalendarRepository
 		return INSTANCE;
 	}
 
-
-	public Observable<List<CalendarModel>> getCalendarList()
+	public Single<List<CalendarModel>> getCalendarList()
 	{
-		return Observable.create(emitter ->
+		return Single.create(emitter ->
 		{
 			if(ActivityCompat.checkSelfPermission(context, Manifest.permission.READ_CALENDAR) != PackageManager.PERMISSION_GRANTED)
 			{
@@ -69,10 +67,10 @@ public class CalendarRepository
 			// Use the cursor to step through the returned records
 			while(cursor.moveToNext())
 			{
-				long calID = 0;
-				String displayName = null;
-				String accountName = null;
-				String ownerName = null;
+				long calID;
+				String displayName;
+				String accountName;
+				String ownerName;
 
 				// Get the field values
 				calID = cursor.getLong(CalendarModel.PROJECTION_ID_INDEX);
@@ -84,58 +82,8 @@ public class CalendarRepository
 
 			}
 			cursor.close();
-			emitter.onNext(modelList);
-			emitter.onComplete();
+			emitter.onSuccess(modelList);
 		});
-	}
-
-	public Observable<List<EventModel>> getEventList(final Long calendarId)
-	{
-		return Observable.create(emitter ->
-		{
-			if(ActivityCompat.checkSelfPermission(context, Manifest.permission.READ_CALENDAR) != PackageManager.PERMISSION_GRANTED)
-			{
-				//    ActivityCompat#requestPermissions
-				// here to request the missing permissions, and then overriding
-				//   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-				//                                          int[] grantResults)
-				// to handle the case where the user grants the permission. See the documentation
-				// for ActivityCompat#requestPermissions for more details.
-				emitter.onError(new Exception("Permission not granted Manifest.permission.READ_CALENDAR"));
-				return;
-			}
-			String selection = "(" + CalendarContract.Events.CALENDAR_ID + " = ?)";
-			String[] selectionArgs = new String[] { String.valueOf(calendarId) };
-			List<EventModel> modelList = new ArrayList<>();
-			ContentResolver contentResolver = context.getContentResolver();
-			Cursor cursor = contentResolver.query(CalendarContract.Events.CONTENT_URI, EventModel.EVENT_PROJECTION, selection, selectionArgs, null);
-			if(cursor == null) return;
-			// Use the cursor to step through the returned records
-			while(cursor.moveToNext())
-			{
-				modelList.add(
-						new EventModel(
-								cursor.getLong(EventModel.PROJECTION_ID_INDEX),
-								cursor.getLong(EventModel.PROJECTION_CALENDAR_ID_INDEX),
-								cursor.getString(EventModel.PROJECTION_ORGANIZER_INDEX),
-								cursor.getString(EventModel.PROJECTION_TITLE_INDEX),
-								cursor.getLong(EventModel.PROJECTION_DTSTART_INDEX),
-								cursor.getLong(EventModel.PROJECTION_DTEND_INDEX),
-								cursor.getString(EventModel.PROJECTION_DURATION_INDEX),
-								cursor.getString(EventModel.PROJECTION_RRULE_INDEX),
-								cursor.getString(EventModel.PROJECTION_RDATE_INDEX)
-						)
-				);
-			}
-			cursor.close();
-			emitter.onNext(modelList);
-			emitter.onComplete();
-		});
-	}
-
-	public Observable<EventModel> getEvents(final Long calendarId)
-	{
-		return getEvents(calendarId, 0, System.currentTimeMillis());
 	}
 
 	public Observable<EventModel> getEvents(final Long calendarId, final long startTimestamp, final long finishTimestamp)
