@@ -1,4 +1,6 @@
-# OvertimeTracker
+# OvertimeTracker 
+[![Build Status](https://travis-ci.org/vmpay/OvertimeTracker.svg?branch=master)
+
 Android app for counting single calendar events duration
 
 If you are recording your working hours in your mobile calendar, this application is for you!
