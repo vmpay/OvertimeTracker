@@ -115,4 +115,46 @@ public class EventModel
 	{
 		return durationHours;
 	}
+
+	@Override
+	public boolean equals(Object o)
+	{
+		if(this == o) return true;
+		if(o == null || getClass() != o.getClass()) return false;
+
+		EventModel that = (EventModel) o;
+
+		if(eventId != that.eventId) return false;
+		if(calendarId != that.calendarId) return false;
+		if(dtStart != that.dtStart) return false;
+		if(dtEnd != that.dtEnd) return false;
+		if(Double.compare(that.durationHours, durationHours) != 0) return false;
+		if(organizer != null ? !organizer.equals(that.organizer) : that.organizer != null)
+		{
+			return false;
+		}
+		if(title != null ? !title.equals(that.title) : that.title != null) return false;
+		if(duration != null ? !duration.equals(that.duration) : that.duration != null) return false;
+		if(rRule != null ? !rRule.equals(that.rRule) : that.rRule != null) return false;
+		return rDate != null ? rDate.equals(that.rDate) : that.rDate == null;
+	}
+
+	@Override
+	public int hashCode()
+	{
+		int result;
+		long temp;
+		result = (int) (eventId ^ (eventId >>> 32));
+		result = 31 * result + (int) (calendarId ^ (calendarId >>> 32));
+		result = 31 * result + (organizer != null ? organizer.hashCode() : 0);
+		result = 31 * result + (title != null ? title.hashCode() : 0);
+		result = 31 * result + (int) (dtStart ^ (dtStart >>> 32));
+		result = 31 * result + (int) (dtEnd ^ (dtEnd >>> 32));
+		result = 31 * result + (duration != null ? duration.hashCode() : 0);
+		result = 31 * result + (rRule != null ? rRule.hashCode() : 0);
+		result = 31 * result + (rDate != null ? rDate.hashCode() : 0);
+		temp = Double.doubleToLongBits(durationHours);
+		result = 31 * result + (int) (temp ^ (temp >>> 32));
+		return result;
+	}
 }

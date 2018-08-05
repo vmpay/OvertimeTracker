@@ -19,6 +19,7 @@ import eu.vmpay.overtimetracker.repository.CalendarModel;
 import eu.vmpay.overtimetracker.repository.CalendarRepository;
 import eu.vmpay.overtimetracker.utils.SingleLiveEvent;
 import eu.vmpay.overtimetracker.utils.SnackbarMessage;
+import io.reactivex.Scheduler;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.schedulers.Schedulers;
@@ -39,12 +40,22 @@ public class CalendarsViewModel extends ViewModel
 
 	private final CalendarRepository calendarRepository;
 	private final Application mApplication;
+	private final Scheduler processScheduler;
+	private final Scheduler androidScheduler;
 	private final CompositeDisposable compositeDisposable;
 
 	public CalendarsViewModel(CalendarRepository calendarRepository, Application mApplication)
 	{
+		this(calendarRepository, mApplication, Schedulers.io(), AndroidSchedulers.mainThread());
+	}
+
+	public CalendarsViewModel(CalendarRepository calendarRepository, Application mApplication,
+	                          Scheduler processScheduler, Scheduler androidScheduler)
+	{
 		this.calendarRepository = calendarRepository;
 		this.mApplication = mApplication;
+		this.processScheduler = processScheduler;
+		this.androidScheduler = androidScheduler;
 		this.compositeDisposable = new CompositeDisposable();
 	}
 
@@ -54,11 +65,12 @@ public class CalendarsViewModel extends ViewModel
 		{
 			compositeDisposable.add(
 					rxPermissions.request(Manifest.permission.READ_CALENDAR)
+							.subscribeOn(processScheduler)
+							.observeOn(androidScheduler)
 							.subscribe(granted -> {
 								if(granted)
 								{
 									loadCalendars();
-
 								}
 								isPermissionGranted.set(granted);
 							}));
@@ -88,8 +100,8 @@ public class CalendarsViewModel extends ViewModel
 	private void loadCalendars()
 	{
 		compositeDisposable.add(calendarRepository.getCalendarList()
-				.subscribeOn(Schedulers.io())
-				.observeOn(AndroidSchedulers.mainThread())
+				.subscribeOn(processScheduler)
+				.observeOn(androidScheduler)
 				.subscribe(calendarModels -> {
 							items.clear();
 							items.addAll(calendarModels);

@@ -16,6 +16,7 @@ import java.util.Locale;
 import eu.vmpay.overtimetracker.repository.CalendarRepository;
 import eu.vmpay.overtimetracker.repository.EventModel;
 import eu.vmpay.overtimetracker.utils.SnackbarMessage;
+import io.reactivex.Scheduler;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.schedulers.Schedulers;
@@ -31,6 +32,8 @@ public class EventsViewModel extends ViewModel implements DatePickerDialog.OnDat
 
 	private final CalendarRepository calendarRepository;
 	private final Application mApplication;
+	private final Scheduler processScheduler;
+	private final Scheduler androidScheduler;
 	private final CompositeDisposable compositeDisposable;
 	private long calendarId = 0;
 
@@ -42,8 +45,16 @@ public class EventsViewModel extends ViewModel implements DatePickerDialog.OnDat
 
 	public EventsViewModel(CalendarRepository calendarRepository, Application mApplication)
 	{
+		this(calendarRepository, mApplication, Schedulers.io(), AndroidSchedulers.mainThread());
+	}
+
+	public EventsViewModel(CalendarRepository calendarRepository, Application mApplication,
+	                       Scheduler processScheduler, Scheduler androidScheduler)
+	{
 		this.calendarRepository = calendarRepository;
 		this.mApplication = mApplication;
+		this.processScheduler = processScheduler;
+		this.androidScheduler = androidScheduler;
 		this.compositeDisposable = new CompositeDisposable();
 
 		Calendar cal = Calendar.getInstance();
@@ -70,8 +81,8 @@ public class EventsViewModel extends ViewModel implements DatePickerDialog.OnDat
 	private void loadEvents(long calendarId, long startTimestamp, long endTimestamp)
 	{
 		compositeDisposable.add(calendarRepository.getEvents(calendarId, startTimestamp, endTimestamp)
-				.subscribeOn(Schedulers.io())
-				.observeOn(AndroidSchedulers.mainThread())
+				.subscribeOn(processScheduler)
+				.observeOn(androidScheduler)
 				.doOnSubscribe(disposable -> items.clear())
 				.subscribe(item -> {
 							item.setDurationHours(item.getDuration() == null ? ((double) (item.getDtEnd() - item.getDtStart())) / 1000 / 60 / 60 : 0);
