@@ -48,6 +48,8 @@ dependencies {
     implementation "com.borax12.materialdaterangepicker:library:$rootProject.dateRangePickerVersion"
 
     testImplementation "junit:junit:$rootProject.junitVersion"
+    testImplementation "org.mockito:mockito-core:$rootProject.mockitoVersion"
     androidTestImplementation "com.android.support.test:runner:$rootProject.runnerVersion"
     androidTestImplementation "com.android.support.test.espresso:espresso-core:$rootProject.espressoVersion"
+    testCompile "android.arch.core:core-testing:$rootProject.archLifecycleVersion"
 }
